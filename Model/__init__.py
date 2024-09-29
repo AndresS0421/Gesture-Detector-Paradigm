@@ -1,0 +1,1 @@
+from Model.keypoint_classifier.keypoint_classifier import KeyPointClassifier
