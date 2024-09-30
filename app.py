@@ -12,6 +12,7 @@ import numpy as np
 import mediapipe as mp
 import keyboard
 import time
+import requests
 
 from Model import KeyPointClassifier
 
@@ -36,6 +37,17 @@ def get_args():
     args = parser.parse_args()
 
     return args
+
+def send_data_to_local_server(gesture_data):
+    url = 'http://127.0.0.1:5000/gesture'  # URL de tu servidor local
+    try:
+        response = requests.post(url, json=gesture_data)
+        if response.status_code == 200:
+            print("Datos enviados exitosamente al servidor " + response.json()["message"])
+        else:
+            print(f"Error al enviar los datos. Código de respuesta: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error de conexión: {e}")
 
 def main():
     args = get_args()
@@ -149,6 +161,10 @@ def main():
                         if gesture is not None:
                             keyboard.press(gesture)
                             print(f"Pressed {gesture}")
+                            
+                            # Enviar los datos al servidor local
+                            gesture_data = {"gesture": gesture}
+                            send_data_to_local_server(gesture_data)
 
                         current_gesture = gesture
                         last_gesture_time = current_time
